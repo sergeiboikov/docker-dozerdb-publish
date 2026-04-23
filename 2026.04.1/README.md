@@ -30,8 +30,6 @@ Build and push multi-arch tags:
 
 ```bash
 docker buildx build \
-  --build-arg CACHEBUST=$(date +%s) \
-  --platform linux/amd64,linux/arm64,linux/arm64/v8 \
   --tag "boikovsa/dozerdb:2026.04.1-trixie" \
   --tag "boikovsa/dozerdb:2026.04.1" \
   --tag "boikovsa/dozerdb:latest" \
