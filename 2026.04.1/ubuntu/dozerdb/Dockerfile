@@ -1,6 +1,6 @@
-FROM debian:trixie-slim AS su_exec_builder
+FROM ubuntu:24.04 AS su_exec_builder
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates gcc git libc6-dev make \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates gcc git libc6-dev make \
     && git clone https://github.com/ncopa/su-exec.git /tmp/su-exec \
     && cd /tmp/su-exec \
     && git checkout 4c3bb42b093f14da70d8ab924b487ccfbb1397af \
@@ -11,7 +11,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/su-exec
 
-FROM debian:trixie-slim
+FROM ubuntu:24.04
 ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:21 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}" \
@@ -26,12 +26,14 @@ ARG NEO4J_URI=http://host.docker.internal:8765/dozerdb-2026.04.1-unix.tar.gz
 RUN groupadd --gid 7474 --system neo4j \
     && useradd --uid 7474 --system --no-create-home --home-dir "${NEO4J_HOME}" --gid neo4j neo4j
 
+# Self-contained local startup assets for Ubuntu variant.
 COPY ./local-package/* /startup/
 COPY --from=su_exec_builder /usr/local/bin/su-exec /usr/bin/su-exec
 
 RUN apt-get update \
-    && apt-get -y upgrade \
-    && apt-get install -y --no-install-recommends ca-certificates procps tini wget \
+    && DEBIAN_FRONTEND=noninteractive apt-get -y upgrade \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates procps tini wget \
+    && chmod +x /startup/docker-entrypoint.sh /startup/neo4j-admin-report.sh \
     && wget --quiet --timeout=60 --tries=20 --retry-connrefused "${NEO4J_URI}" \
     && echo "${NEO4J_SHA256}  ${NEO4J_TARBALL}" | sha256sum -c --strict --quiet \
     && tar --extract --file ${NEO4J_TARBALL} --directory /var/lib \
@@ -39,7 +41,7 @@ RUN apt-get update \
     && wget --quiet --timeout=60 --tries=20 --retry-connrefused "https://github.com/neo4j/apoc/releases/download/${APOC_VERSION}/apoc-${APOC_VERSION}-core.jar" \
     && mv "apoc-${APOC_VERSION}-core.jar" "${NEO4J_HOME}/plugins/" \
     && rm ${NEO4J_TARBALL} \
-    && sed -i 's/Package Type:.*/Package Type: docker trixie-slim/' $NEO4J_HOME/packaging_info \
+    && sed -i 's/Package Type:.*/Package Type: docker ubuntu-24.04/' $NEO4J_HOME/packaging_info \
     && mv /startup/neo4j-admin-report.sh "${NEO4J_HOME}"/bin/neo4j-admin-report \
     && mv "${NEO4J_HOME}"/data /data \
     && mv "${NEO4J_HOME}"/logs /logs \
@@ -55,7 +57,6 @@ RUN apt-get update \
     && apt-get -y autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
 
 ENV PATH="${NEO4J_HOME}"/bin:$PATH
 

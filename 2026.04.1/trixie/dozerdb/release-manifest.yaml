@@ -1,6 +1,6 @@
 release:
   dozerdb_release_version: "2026.04.1"
-  base_runtime_line: "5.26.3.0"
+  base_runtime_line: "2026.03.0"
   java_runtime: "temurin-21"
   os_variant: "trixie"
   image_context: "2026.04.1/trixie/dozerdb"
@@ -13,19 +13,19 @@ artifacts:
     path: "https://github.com/sergeiboikov/dozerdb-browser/releases/download/2026.04.1/dozerdb-browser-2026.04.1.jar"
     version: "2026.04.1"
   core_jar:
-    path: "https://github.com/sergeiboikov/dozerdb-core/releases/download/2026.03.1-1.1.0/dozerdb-core-2026.03.1-1.1.0.jar"
-    version: "2026.03.1-1.1.0"
+    path: "d:/GIT/RNTG-DATA/DB_BI/nsd/CodeScope/dozer/dozerdb-core/core/target/dozerdb-core-2026.03.0-1.1.0.jar"
+    version: "2026.03.0-1.1.0"
   plugin_jar:
     path: "d:/GIT/RNTG-DATA/DB_BI/nsd/CodeScope/dozer/dozerdb-plugin/target/dozerdb-plugin-2026.04.1.jar"
     version: "2026.04.1"
 
 distribution:
-  source_baseline_uri: "docker-image://boikovsa/dozerdb:5.26.4"
+  source_baseline_uri: "file://d:/GIT/RNTG-DATA/DB_BI/nsd/CodeScope/dozer/neo4j/packaging/standalone/target/neo4j-community-2026.03.0-unix.tar.gz"
   local_tarball_filename: "dozerdb-2026.04.1-unix.tar.gz"
   local_tarball_path: "d:/GIT/RNTG-DATA/DB_BI/nsd/CodeScope/dozer/docker-dozerdb-publish/2026.04.1/trixie/dozerdb/dozerdb-2026.04.1-unix.tar.gz"
-  local_tarball_sha256: "b24580fa94701650c81e0f912bebc48b1200838be66391934acd266a92082dd4"
+  local_tarball_sha256: "1d76394e2716c51acff6c2e2e05714354a2c68bc6472e27994e034efe71bbb24"
   expected_root_pattern: "dozerdb-*"
-  apoc_version: "5.26.24"
+  apoc_version: "2026.03.0"
 
 publish:
   fork_release_uri: "https://github.com/sergeiboikov/docker-dozerdb-publish/releases/download/2026.04.1/dozerdb-2026.04.1-unix.tar.gz"
