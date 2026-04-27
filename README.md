@@ -12,15 +12,14 @@ To build multi-platform Docker images compatible with both AMD64 and ARM archite
 
 ```
 
-docker buildx build \
-  --build-arg CACHEBUST=$(date +%s) \
-  --no-cache \
-  --platform linux/amd64,linux/arm64,linux/arm64/v8 \
-  --tag "boikovsa/dozerdb:2026.04.1-ubuntu" \
-  --tag "boikovsa/dozerdb:latest" \
-  --tag "boikovsa/dozerdb:2026.04.1" \
-  "2026.04.1/ubuntu/dozerdb" \
-  --push
+$env:DOCKER_BUILDKIT='0'
+docker build --no-cache `
+  --tag dozerdb:2026.04.1-ubuntu `
+  --build-arg NEO4J_URI=http://host.docker.internal:8765/dozerdb-2026.04.1-unix.tar.gz `
+  "2026.04.1/ubuntu/dozerdb"
+Remove-Item Env:DOCKER_BUILDKIT
+
+docker push 
 
 ```
 

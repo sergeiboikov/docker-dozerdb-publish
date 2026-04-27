@@ -15,10 +15,11 @@ FROM ubuntu:24.04
 ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:21 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}" \
-    NEO4J_SHA256=1d76394e2716c51acff6c2e2e05714354a2c68bc6472e27994e034efe71bbb24 \
+    NEO4J_SHA256=2b4078472d2733953a3b8ffccac349f6014cef920b59674d92a93955eb750169 \
     NEO4J_TARBALL=dozerdb-2026.04.1-unix.tar.gz \
     NEO4J_EDITION=community \
     NEO4J_HOME="/var/lib/neo4j" \
+    DOZERDB_PLUGIN_JAR=dozerdb-plugin-2026.04.1.jar \
     APOC_VERSION=2026.03.0 \
     LANG=C.UTF-8
 ARG NEO4J_URI=http://host.docker.internal:8765/dozerdb-2026.04.1-unix.tar.gz
@@ -32,12 +33,15 @@ COPY --from=su_exec_builder /usr/local/bin/su-exec /usr/bin/su-exec
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get -y upgrade \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates procps tini wget \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates procps tini wget jq \
+    && find /startup -maxdepth 1 -type f \( -name '*.sh' -o -name '*.jq' \) -exec sed -i 's/\r$//' {} + \
     && chmod +x /startup/docker-entrypoint.sh /startup/neo4j-admin-report.sh \
     && wget --quiet --timeout=60 --tries=20 --retry-connrefused "${NEO4J_URI}" \
     && echo "${NEO4J_SHA256}  ${NEO4J_TARBALL}" | sha256sum -c --strict --quiet \
     && tar --extract --file ${NEO4J_TARBALL} --directory /var/lib \
     && mv /var/lib/dozerdb-* "${NEO4J_HOME}" \
+    && test -f "${NEO4J_HOME}/plugins/${DOZERDB_PLUGIN_JAR}" \
+    && mv "${NEO4J_HOME}/plugins/${DOZERDB_PLUGIN_JAR}" "${NEO4J_HOME}/lib/${DOZERDB_PLUGIN_JAR}" \
     && wget --quiet --timeout=60 --tries=20 --retry-connrefused "https://github.com/neo4j/apoc/releases/download/${APOC_VERSION}/apoc-${APOC_VERSION}-core.jar" \
     && mv "apoc-${APOC_VERSION}-core.jar" "${NEO4J_HOME}/plugins/" \
     && rm ${NEO4J_TARBALL} \
@@ -58,7 +62,8 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PATH="${NEO4J_HOME}"/bin:$PATH
+ENV PATH="${NEO4J_HOME}"/bin:$PATH \
+    CLASSPATH_PREFIX="${NEO4J_HOME}/lib/${DOZERDB_PLUGIN_JAR}"
 
 WORKDIR "${NEO4J_HOME}"
 
