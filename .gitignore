@@ -3,3 +3,4 @@
 .DS_Store
 /security-baseline/
 *.tar.gz
+trivy-report_*.txt
