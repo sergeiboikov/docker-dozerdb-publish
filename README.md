@@ -224,4 +224,17 @@ docker run --rm "boikovsa/dozerdb:2026.04.1-ubuntu" neo4j --version
 - Yarn lockfile error (`--frozen-lockfile`)  
   Run plain `yarn install` in `dozerdb-browser` and rebuild.
 
+## 12) 2026 admin-runtime regression smoke matrix
+
+Use the script below to verify that the Dozer runtime is active and `CREATE DATABASE ... IF NOT EXISTS` does not fall back to Community behavior.
+
+```powershell
+Set-Location "d:\GIT\RNTG-DATA\DB_BI\nsd\CodeScope\dozer\docker-dozerdb-publish\2026.04.1\ubuntu\dozerdb\build-remediate"
+.\verify-admin-runtime.ps1 -Image "boikovsa/dozerdb:2026.04.1-ubuntu" -Neo4jAuth "neo4j/StrongPassw0rd"
+```
+
+The script validates two scenarios:
+- baseline container startup
+- customer-like compose env (`NEO4J_PLUGINS`, procedure allowlist, memory settings)
+
 

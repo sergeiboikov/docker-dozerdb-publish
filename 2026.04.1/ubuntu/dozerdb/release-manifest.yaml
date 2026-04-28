@@ -23,7 +23,7 @@ distribution:
   source_baseline_uri: "file://d:/GIT/RNTG-DATA/DB_BI/nsd/CodeScope/dozer/neo4j/packaging/standalone/target/neo4j-community-2026.03.0-unix.tar.gz"
   local_tarball_filename: "dozerdb-2026.04.1-unix.tar.gz"
   local_tarball_path: "d:/GIT/RNTG-DATA/DB_BI/nsd/CodeScope/dozer/docker-dozerdb-publish/2026.04.1/ubuntu/dozerdb/dozerdb-2026.04.1-unix.tar.gz"
-  local_tarball_sha256: "2b4078472d2733953a3b8ffccac349f6014cef920b59674d92a93955eb750169"
+  local_tarball_sha256: "fafad0e6044f6c818fceabbda297cf7b0d43dd481e81726e8fa3d976a8516b77"
   expected_root_pattern: "dozerdb-*"
   apoc_version: "2026.03.0"
 

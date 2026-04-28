@@ -15,7 +15,7 @@ FROM ubuntu:24.04
 ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:21 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}" \
-    NEO4J_SHA256=2b4078472d2733953a3b8ffccac349f6014cef920b59674d92a93955eb750169 \
+    NEO4J_SHA256=fafad0e6044f6c818fceabbda297cf7b0d43dd481e81726e8fa3d976a8516b77 \
     NEO4J_TARBALL=dozerdb-2026.04.1-unix.tar.gz \
     NEO4J_EDITION=community \
     NEO4J_HOME="/var/lib/neo4j" \
